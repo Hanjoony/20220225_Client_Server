@@ -8,11 +8,6 @@ using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-struct NumberPacket {
-	int Number1;
-	int Number2;
-};
-
 int main()
 {
 	WSAData WsaData;
@@ -33,7 +28,7 @@ int main()
 
 	SOCKADDR_IN ServerAddr;
 	memset(&ServerAddr, 0, sizeof(ServerAddr));
-	ServerAddr.sin_port = htons(50000);
+	ServerAddr.sin_port = htons(5001);
 	ServerAddr.sin_family = PF_INET;
 	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
@@ -43,15 +38,13 @@ int main()
 		exit(-1);
 	}
 
-	NumberPacket Packet;
+	char Message[] = "give me message.";
+	send(ServerSocket, Message, strlen(Message)+1, 0);
+	
+	cout << Message << endl;
 
-	Packet.Number1 = 10;
-	Packet.Number2 = 20;
-
-	send(ServerSocket, (char*)(&Packet), sizeof(Packet), 0);
-
-	char Result[1024];
-	recv(ServerSocket, Result, 1023, 0);
+	char Result[1024] = { 0, };
+	recv(ServerSocket, Result, 1024, 0);
 
 	cout << "Server Sended : " << Result << endl;
 
