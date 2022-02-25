@@ -10,21 +10,12 @@ using namespace std;
 
 int main()
 {
-	WSAData WsaData;
+	WSAData wsaData;
 
-	if (WSAStartup(MAKEWORD(2, 2), &WsaData))
-	{
-		cout << "Winsock Error : " << GetLastError() << endl;
-		exit(-1);
-	}
+	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
 	SOCKET ServerSocket;
 	ServerSocket = socket(AF_INET, SOCK_STREAM, 0);
-	if (ServerSocket == INVALID_SOCKET)
-	{
-		cout << "Socket Error : " << GetLastError() << endl;
-		exit(-1);
-	}
 
 	SOCKADDR_IN ServerAddr;
 	memset(&ServerAddr, 0, sizeof(ServerAddr));
@@ -32,21 +23,18 @@ int main()
 	ServerAddr.sin_family = PF_INET;
 	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-	if (connect(ServerSocket, (SOCKADDR*)&ServerAddr, sizeof(ServerAddr)) == SOCKET_ERROR)
-	{
-		cout << "connect Error : " << GetLastError() << endl;
-		exit(-1);
-	}
+	connect(ServerSocket, (SOCKADDR*)&ServerAddr, sizeof(ServerAddr));
 
-	char Message[] = "give me message.";
-	send(ServerSocket, Message, strlen(Message)+1, 0);
+
+	string Message = "give me message.";
+	send(ServerSocket, Message.c_str(), Message.length(), 0);
 	
 	cout << Message << endl;
 
-	char Result[1024] = { 0, };
-	recv(ServerSocket, Result, 1024, 0);
+	char Buffer[1024] = { 0, };
+	recv(ServerSocket, Buffer, 1024, 0);
 
-	cout << "Server Sended : " << Result << endl;
+	cout << "Server Sended : " << Buffer << endl;
 
 	closesocket(ServerSocket);
 
